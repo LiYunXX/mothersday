@@ -80,7 +80,7 @@
       .cover-envelope-wrapper {
         position: relative;
         width: 200px;
-        height: 140px;
+        height: 110px;
         animation: float 2s ease-in-out infinite;
         cursor: pointer;
       }
@@ -93,6 +93,8 @@
         width: 100%;
         height: 110px;
         background: linear-gradient(145deg, #d1c4e9, #b39ddb);
+        position: relative;
+        overflow: hidden; /* 保证折痕不超出圆角 */
         border-radius: 8px;
         box-shadow:
           0 10px 20px rgba(74, 20, 140, 0.4),
@@ -100,18 +102,38 @@
         z-index: 2;
       }
 
-      /* 信封侧边折痕（模拟立体） */
+      /* 信封身体 - 左边高光折痕 */
       .envelope-body::before {
         content: "";
         position: absolute;
         top: 0;
         left: 0;
-        width: 100%;
+        width: 6px; /* 折痕宽度，比原来宽 */
         height: 100%;
-        border-radius: 8px;
-        border-left: 2px solid rgba(255, 255, 255, 0.2);
-        border-right: 2px solid rgba(0, 0, 0, 0.1);
-        box-sizing: border-box;
+        background: linear-gradient(
+          to right,
+          rgba(255, 255, 255, 0.7),
+          rgba(255, 255, 255, 0.1)
+        );
+        border-radius: 8px 0 0 8px; /* 圆角跟信封一致 */
+        z-index: 5; /* 放在上层 */
+      }
+
+      /* 右边暗面折痕 */
+      .envelope-body::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 6px;
+        height: 100%;
+        background: linear-gradient(
+          to left,
+          rgba(0, 0, 0, 0.2),
+          rgba(0, 0, 0, 0.05)
+        );
+        border-radius: 0 8px 8px 0;
+        z-index: 5;
       }
 
       /* 封盖（三角形） */
@@ -120,7 +142,7 @@
         top: 0;
         left: 0;
         width: 100%;
-        height: 60px;
+        height: 80px;
         z-index: 3;
         transform-origin: top center;
         transition: transform 0.6s ease;
@@ -134,7 +156,7 @@
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
       }
 
-      /* 封盖打开状态 */
+      /* 封盖打开状态- */
       .cover-envelope-wrapper.opened .envelope-flap {
         transform: rotateX(180deg);
       }
@@ -315,7 +337,7 @@
   </head>
   <body>
     <!-- ========== 封面页 ========== -->
-    <div class="page active cover-page" id="coverPage" onclick="openBlessing()">
+    <div class="page active cover-page" id="coverPage">
       <div class="cover-envelope-wrapper" id="envelopeBox">
         <div class="envelope-flap">
           <div class="flap-top"></div>
@@ -446,6 +468,17 @@
           heart.addEventListener("animationend", () => heart.remove());
         }, 600);
       }
+      // 信封点击打开动画
+      document
+        .getElementById("envelopeBox")
+        .addEventListener("click", function () {
+          // 先播放翻盖动画
+          this.classList.add("opened");
+          // 动画结束后切换到祝福页
+          setTimeout(() => {
+            openBlessing();
+          }, 600); // 和CSS过渡时间一致
+        });
     </script>
   </body>
 </html>
