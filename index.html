@@ -80,6 +80,7 @@
         align-items: center;
         justify-content: center;
         background: linear-gradient(135deg, #e1bee7, #ce93d8); /* 浅紫渐变 */
+
         cursor: pointer;
       }
       /* ========== CSS 信封 ========== */
@@ -277,7 +278,7 @@
         max-height: 70vh; /* 限制最高为屏幕高度的70% */
         overflow-y: auto; /* 内容超出时显示滚动条 */
         -webkit-overflow-scrolling: touch; /* iOS顺滑滚动 */
-        background: rgba(238, 214, 255, 0.85);
+        background: rgba(238, 214, 255, 0.2);
         backdrop-filter: blur(10px);
         border-radius: 24px;
         padding: 35px 25px;
@@ -305,7 +306,7 @@
       }
       .letter-content {
         font-size: 20px;
-        color: #4a148c;
+        color: #000000;
         line-height: 2.2;
         letter-spacing: 2px;
         white-space: pre-line;
@@ -313,7 +314,7 @@
       .letter-signature {
         margin-top: 30px;
         font-size: 18px;
-        color: #ab47bc;
+        color: #9e0000;
       }
 
       /* 音乐按钮 */
@@ -356,6 +357,79 @@
           opacity: 0;
         }
       }
+      /* 看照片按钮 */
+      .photo-mode-btn {
+        position: absolute;
+        top: 80px; /* 在音乐按钮下方一点 */
+        right: 20px;
+        z-index: 20;
+        background: rgba(255, 255, 255, 0.75);
+        backdrop-filter: blur(8px);
+        border: none;
+        border-radius: 20px;
+        padding: 8px 16px;
+        font-size: 16px;
+        color: #6a1b9a;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        display: none; /* 和音乐按钮一起显示 */
+        align-items: center;
+        gap: 4px;
+        cursor: pointer;
+      }
+      .photo-mode-btn.show {
+        display: flex;
+      }
+
+      /* 全屏照片查看器 */
+      .photo-viewer {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #1a1a2e; /* 深色背景，让照片突出 */
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+      }
+      .photo-viewer.hidden {
+        display: none;
+      }
+      .photo-viewer-slide {
+        width: 100%;
+        height: 80%;
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+        transition: background-image 0.4s ease;
+      }
+      .photo-viewer-dots {
+        display: flex;
+        gap: 8px;
+        margin: 16px 0;
+      }
+      .photo-viewer-dots span {
+        width: 8px;
+        height: 8px;
+        background: rgba(255, 255, 255, 0.4);
+        border-radius: 50%;
+      }
+      .photo-viewer-dots span.active {
+        background: #ffffff;
+      }
+      .photo-back-btn {
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        font-size: 16px;
+        padding: 8px 24px;
+        border-radius: 20px;
+        cursor: pointer;
+        margin-top: 8px;
+      }
     </style>
   </head>
   <body>
@@ -380,7 +454,7 @@
 
       <!-- 信纸 -->
       <div class="letter-container" id="letterBox">
-        <h1>🌷 母亲节快乐 🌷</h1>
+        <h1>🌷母亲节快乐🌷</h1>
         <div class="letter-content">
           <!-- /* ===== 把下面文字换成你想对妈妈说的话 ===== */ -->
           亲爱的妈妈，<br />
@@ -401,7 +475,21 @@
       <button class="music-btn" id="musicBtn" onclick="toggleMusic()">
         🎵
       </button>
+      <!-- 音乐按钮下面，添加这个“看照片”按钮 -->
+      <button
+        class="photo-mode-btn"
+        id="photoModeBtn"
+        onclick="enterPhotoMode()"
+      >
+        📷 欣赏照片
+      </button>
 
+      <!-- 全屏照片查看器，放在祝福页最底部 -->
+      <div class="photo-viewer hidden" id="photoViewer">
+        <div class="photo-viewer-slide" id="photoSlide"></div>
+        <div class="photo-viewer-dots" id="photoDots"></div>
+        <button class="photo-back-btn" onclick="exitPhotoMode()">✕ 返回</button>
+      </div>
       <!-- 背景音乐 -->
       <audio id="bgMusic" loop preload="auto">
         <!-- /* ===== 替换为你的音乐链接 ===== */ -->
@@ -413,17 +501,17 @@
     <script>
       // ========== 照片列表（替换为你的照片链接） ==========
       const PHOTOS = [
-        "https://liyunxx.github.io/mothersday/images/photo1.jpg",
-        "https://liyunxx.github.io/mothersday/images/photo2.jpg",
-        "https://liyunxx.github.io/mothersday/images/photo3.jpg",
-        "https://liyunxx.github.io/mothersday/images/photo4.jpg",
-        "https://liyunxx.github.io/mothersday/images/photo5.jpg",
-        "https://liyunxx.github.io/mothersday/images/photo6.jpg",
-        "https://liyunxx.github.io/mothersday/images/photo7.jpg",
-        "https://liyunxx.github.io/mothersday/images/photo8.jpg",
-        "https://liyunxx.github.io/mothersday/images/photo9.jpg",
-        "https://liyunxx.github.io/mothersday/images/photo10.jpg",
-        "https://liyunxx.github.io/mothersday/images/photo11.jpg",
+        "https://bu.dusays.com/2026/05/10/69ff7a6732810.jpg",
+        "https://bu.dusays.com/2026/05/10/69ff7a6cd30dd.jpg",
+        "https://bu.dusays.com/2026/05/10/69ff7a737008c.jpg",
+        "https://bu.dusays.com/2026/05/10/69ff7a7448405.jpg",
+        "https://bu.dusays.com/2026/05/10/69ff7a7536497.jpg",
+        "https://bu.dusays.com/2026/05/10/69ff7a77e5f5d.jpg",
+        "https://bu.dusays.com/2026/05/10/69ff7a7857e1a.jpg",
+        "https://bu.dusays.com/2026/05/10/69ff7a79a5f08.jpg",
+        "https://bu.dusays.com/2026/05/10/69ff7a79c8da8.jpg",
+        "https://bu.dusays.com/2026/05/10/69ff7a7fe2ef2.jpg",
+        "https://bu.dusays.com/2026/05/10/69ff7a80036c2.jpg",
       ];
 
       // 生成轮播图
@@ -526,6 +614,74 @@
             openBlessing();
           }, 600); // 和CSS过渡时间一致
         });
+      // 进入纯照片浏览模式
+      function enterPhotoMode() {
+        document.getElementById("photoViewer").classList.remove("hidden");
+        // 同步当前照片索引
+        updatePhotoViewer();
+        // 暂停背景轮播，防止冲突
+        clearInterval(photoInterval);
+        photoInterval = null;
+      }
+
+      // 退出照片浏览
+      function exitPhotoMode() {
+        document.getElementById("photoViewer").classList.add("hidden");
+        // 重新开始轮播
+        if (!photoInterval) {
+          startPhotoSlideshow();
+        }
+      }
+
+      // 更新全屏查看器里的照片和导航点
+      function updatePhotoViewer() {
+        const slide = document.getElementById("photoSlide");
+        const dotsContainer = document.getElementById("photoDots");
+        const total = PHOTOS.length;
+        if (total === 0) return;
+
+        // 设置当前照片
+        slide.style.backgroundImage = `url(${PHOTOS[currentPhotoIndex]})`;
+        // 生成指示点
+        dotsContainer.innerHTML = "";
+        for (let i = 0; i < total; i++) {
+          const dot = document.createElement("span");
+          if (i === currentPhotoIndex) dot.classList.add("active");
+          dot.addEventListener("click", () => {
+            currentPhotoIndex = i;
+            updatePhotoViewer();
+          });
+          dotsContainer.appendChild(dot);
+        }
+
+        // 左右滑动支持（触摸）
+        let touchStartX = 0;
+        slide.addEventListener("touchstart", (e) => {
+          touchStartX = e.touches[0].clientX;
+        });
+        slide.addEventListener("touchend", (e) => {
+          const delta = e.changedTouches[0].clientX - touchStartX;
+          if (Math.abs(delta) > 50) {
+            if (delta > 0) {
+              // 向右滑，上一张
+              currentPhotoIndex = (currentPhotoIndex - 1 + total) % total;
+            } else {
+              // 向左滑，下一张
+              currentPhotoIndex = (currentPhotoIndex + 1) % total;
+            }
+            updatePhotoViewer();
+          }
+        });
+      }
+
+      // 还需要让“看照片按钮”和音乐按钮一起显示，修改 openBlessing 里的 setTimeout：
+      // 找到 openBlessing 函数里的 setTimeout，里面原来只有 letterBox 和 musicBtn，加上 photoModeBtn
+      // 改成这样：
+      setTimeout(() => {
+        document.getElementById("letterBox").classList.add("show");
+        document.getElementById("musicBtn").classList.add("show");
+        document.getElementById("photoModeBtn").classList.add("show"); // ← 新增这一行
+      }, 300);
     </script>
   </body>
 </html>
