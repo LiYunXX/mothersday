@@ -13,7 +13,10 @@
     <!-- 替换为你的信封封面图 -->
     <meta property="og:image" content="https://你的图片地址.jpg" />
     <!-- 替换为部署后的真实网址 -->
-    <meta property="og:url" content="https://你的页面地址.html" />
+    <meta
+      property="og:url"
+      content="https://liyunxx.github.io/mothersday/index.html"
+    />
     <meta property="og:type" content="article" />
     <!-- 微信专属（也可以用同样的） -->
     <meta itemprop="name" content="💌 母亲节快乐 - 轻触拆开" />
@@ -73,10 +76,89 @@
         background: linear-gradient(135deg, #e1bee7, #ce93d8); /* 浅紫渐变 */
         cursor: pointer;
       }
-      .cover-envelope {
-        font-size: 140px;
+      /* ========== CSS 信封 ========== */
+      .cover-envelope-wrapper {
+        position: relative;
+        width: 200px;
+        height: 140px;
         animation: float 2s ease-in-out infinite;
-        filter: drop-shadow(0 8px 12px rgba(74, 20, 140, 0.3));
+        cursor: pointer;
+      }
+
+      /* 信封身体 */
+      .envelope-body {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 110px;
+        background: linear-gradient(145deg, #d1c4e9, #b39ddb);
+        border-radius: 8px;
+        box-shadow:
+          0 10px 20px rgba(74, 20, 140, 0.4),
+          inset 0 2px 4px rgba(255, 255, 255, 0.3);
+        z-index: 2;
+      }
+
+      /* 信封侧边折痕（模拟立体） */
+      .envelope-body::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border-radius: 8px;
+        border-left: 2px solid rgba(255, 255, 255, 0.2);
+        border-right: 2px solid rgba(0, 0, 0, 0.1);
+        box-sizing: border-box;
+      }
+
+      /* 封盖（三角形） */
+      .envelope-flap {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 60px;
+        z-index: 3;
+        transform-origin: top center;
+        transition: transform 0.6s ease;
+      }
+
+      .flap-top {
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(180deg, #c7b2e4, #b39ddb);
+        clip-path: polygon(0 0, 50% 100%, 100% 0);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      }
+
+      /* 封盖打开状态 */
+      .cover-envelope-wrapper.opened .envelope-flap {
+        transform: rotateX(180deg);
+      }
+
+      /* 信封上的爱心封印 */
+      .seal {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 36px;
+        height: 36px;
+        background: #e57373;
+        border-radius: 50%;
+        z-index: 4;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        color: white;
+      }
+      .seal::after {
+        content: "❤";
       }
       .cover-tip {
         margin-top: 20px;
@@ -144,8 +226,12 @@
       .letter-container {
         position: relative;
         z-index: 2;
+        margin-top: 50px;
         width: 85%;
         max-width: 400px;
+        max-height: 70vh; /* 限制最高为屏幕高度的70% */
+        overflow-y: auto; /* 内容超出时显示滚动条 */
+        -webkit-overflow-scrolling: touch; /* iOS顺滑滚动 */
         background: rgba(238, 214, 255, 0.85);
         backdrop-filter: blur(10px);
         border-radius: 24px;
@@ -230,7 +316,14 @@
   <body>
     <!-- ========== 封面页 ========== -->
     <div class="page active cover-page" id="coverPage" onclick="openBlessing()">
-      <div class="cover-envelope">💌</div>
+      <div class="cover-envelope-wrapper" id="envelopeBox">
+        <div class="envelope-flap">
+          <div class="flap-top"></div>
+        </div>
+        <div class="envelope-body">
+          <div class="seal"></div>
+        </div>
+      </div>
       <div class="cover-tip">轻 触 拆 开</div>
     </div>
     <!-- ========== 祝福页 ========== -->
