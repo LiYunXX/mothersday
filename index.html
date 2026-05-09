@@ -11,7 +11,10 @@
     <meta property="og:title" content="💌 母亲节快乐 - 轻触拆开" />
     <meta property="og:description" content="妈妈，有一封信等你查收~" />
     <!-- 替换为你的信封封面图 -->
-    <meta property="og:image" content="https://你的图片地址.jpg" />
+    <meta
+      property="og:image"
+      content="https://liyunxx.github.io/mothersday/images/cover.jpg"
+    />
     <!-- 替换为部署后的真实网址 -->
     <meta
       property="og:url"
@@ -21,7 +24,10 @@
     <!-- 微信专属（也可以用同样的） -->
     <meta itemprop="name" content="💌 母亲节快乐 - 轻触拆开" />
     <meta itemprop="description" content="妈妈，有一封信等你查收~" />
-    <meta itemprop="image" content="https://你的图片地址.jpg" />
+    <meta
+      itemprop="image"
+      content="https://liyunxx.github.io/mothersday/images/cover.jpg"
+    />
     <style>
       * {
         margin: 0;
@@ -228,18 +234,35 @@
         width: 100%;
         height: 100%;
         z-index: 0;
+        background: #e1bee7; /* 浅紫底色，防止加载前白屏 */
       }
+      /* 增加一个模糊背景层，自动匹配当前图片 */
+      .photo-slideshow .blur-bg {
+        position: absolute;
+        top: -20px;
+        left: -20px;
+        width: calc(100% + 40px);
+        height: calc(100% + 40px);
+        background-size: cover;
+        background-position: center;
+        filter: blur(20px) brightness(0.6);
+        opacity: 0.8;
+        transition: background-image 2s ease;
+        z-index: 0;
+      }
+      /* 主图：完整显示，居中 */
       .photo-slideshow img {
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        object-fit: cover;
+        object-fit: contain; /* 关键修改：完整显示图片 */
+        z-index: 1;
         opacity: 0;
         transition: opacity 2s ease;
-        filter: brightness(0.55) blur(2px); /* 让背景柔和，文字清晰 */
       }
+
       .photo-slideshow img.active-photo {
         opacity: 1;
       }
@@ -399,11 +422,19 @@
       // 生成轮播图
       const slideshow = document.getElementById("photoSlideshow");
       let currentPhotoIndex = 0;
+      // 先创建模糊背景层
+      const blurBg = document.createElement("div");
+      blurBg.className = "blur-bg";
+      slideshow.appendChild(blurBg);
+
       PHOTOS.forEach((src, idx) => {
         const img = document.createElement("img");
         img.src = src;
         img.alt = "合照";
-        if (idx === 0) img.classList.add("active-photo");
+        if (idx === 0) {
+          img.classList.add("active-photo");
+          blurBg.style.backgroundImage = `url(${src})`; // 初始背景
+        }
         slideshow.appendChild(img);
       });
 
@@ -412,11 +443,20 @@
       function startPhotoSlideshow() {
         const images = slideshow.querySelectorAll("img");
         if (images.length === 0) return;
+
+        // 先把初始背景设好（防止第一张没背景）
+        if (PHOTOS.length > 0) {
+          blurBg.style.backgroundImage = `url(${PHOTOS[0]})`;
+        }
+
         photoInterval = setInterval(() => {
           images[currentPhotoIndex].classList.remove("active-photo");
           currentPhotoIndex = (currentPhotoIndex + 1) % images.length;
           images[currentPhotoIndex].classList.add("active-photo");
-        }, 4000); // 每4秒切换一张
+
+          // 同步更新模糊背景
+          blurBg.style.backgroundImage = `url(${PHOTOS[currentPhotoIndex]})`;
+        }, 4000);
       }
 
       // ========== 打开信封 ==========
