@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <title>💜母亲节快乐 - 一封给你的信</title>
+    <!-- 微信 Open Graph 标签 -->
+    <meta property="og:title" content="💌 母亲节快乐 - 轻触拆开" />
+    <meta property="og:description" content="妈妈，有一封信等你查收~" />
+    <!-- 替换为你的信封封面图 -->
+    <meta property="og:image" content="https://你的图片地址.jpg" />
+    <!-- 替换为部署后的真实网址 -->
+    <meta property="og:url" content="https://你的页面地址.html" />
+    <meta property="og:type" content="article" />
+    <!-- 微信专属（也可以用同样的） -->
+    <meta itemprop="name" content="💌 母亲节快乐 - 轻触拆开" />
+    <meta itemprop="description" content="妈妈，有一封信等你查收~" />
+    <meta itemprop="image" content="https://你的图片地址.jpg" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      /* ========== 引入艺术字体 ========== */
+      @font-face {
+        font-family: "ArtFont";
+        /* 使用了一款免费可商用的手写体，如果你有其他艺术字，替换下面 url */
+        src: url("https://raw.githubusercontent.com/izayal/fonts/main/ZCOOL_KuaiLe/ZCOOLKuaiLe-Regular.ttf")
+          format("truetype");
+        font-weight: normal;
+        font-style: normal;
+      }
+
+      body {
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+        font-family: "ArtFont", "PingFang SC", "Microsoft YaHei", sans-serif;
+        background: #f3e5f5; /* 浅紫底色 */
+      }
+
+      /* ========== 页面容器 ========== */
+      .page {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        transition: opacity 0.8s ease;
+      }
+      .hidden {
+        opacity: 0;
+        pointer-events: none;
+        z-index: 1;
+      }
+      .active {
+        opacity: 1;
+        pointer-events: auto;
+        z-index: 10;
+      }
+
+      /* ========== 封面页（信封页） ========== */
+      .cover-page {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #e1bee7, #ce93d8); /* 浅紫渐变 */
+        cursor: pointer;
+      }
+      .cover-envelope {
+        font-size: 140px;
+        animation: float 2s ease-in-out infinite;
+        filter: drop-shadow(0 8px 12px rgba(74, 20, 140, 0.3));
+      }
+      .cover-tip {
+        margin-top: 20px;
+        font-size: 22px;
+        color: #4a148c;
+        letter-spacing: 6px;
+        animation: pulse 1.5s ease-in-out infinite;
+      }
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-15px);
+        }
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.6;
+          transform: scale(0.95);
+        }
+      }
+
+      /* ========== 祝福页 ========== */
+      .blessing-page {
+        background: #f3e5f5; /* 极浅紫，上面覆盖照片轮播 */
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* 照片轮播背景 */
+      .photo-slideshow {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+      }
+      .photo-slideshow img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0;
+        transition: opacity 2s ease;
+        filter: brightness(0.55) blur(2px); /* 让背景柔和，文字清晰 */
+      }
+      .photo-slideshow img.active-photo {
+        opacity: 1;
+      }
+
+      /* 信纸内容区 */
+      .letter-container {
+        position: relative;
+        z-index: 2;
+        width: 85%;
+        max-width: 400px;
+        background: rgba(238, 214, 255, 0.85);
+        backdrop-filter: blur(10px);
+        border-radius: 24px;
+        padding: 35px 25px;
+        box-shadow: 0 20px 40px rgba(74, 20, 140, 0.25);
+        text-align: center;
+        animation: fadeInUp 1s ease forwards;
+        transform: translateY(30px);
+        opacity: 0;
+      }
+      .letter-container.show {
+        animation: fadeInUp 1s ease forwards;
+      }
+      @keyframes fadeInUp {
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      .letter-container h1 {
+        font-size: 32px;
+        color: #6a1b9a;
+        margin-bottom: 24px;
+        letter-spacing: 4px;
+      }
+      .letter-content {
+        font-size: 20px;
+        color: #4a148c;
+        line-height: 2.2;
+        letter-spacing: 2px;
+        white-space: pre-line;
+      }
+      .letter-signature {
+        margin-top: 30px;
+        font-size: 18px;
+        color: #ab47bc;
+      }
+
+      /* 音乐按钮 */
+      .music-btn {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        z-index: 20;
+        width: 44px;
+        height: 44px;
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(6px);
+        border-radius: 50%;
+        border: none;
+        font-size: 24px;
+        display: none; /* 初始隐藏，信封打开后显示 */
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+      .music-btn.show {
+        display: flex;
+      }
+
+      /* 爱心飘落 */
+      .heart {
+        position: absolute;
+        z-index: 3;
+        pointer-events: none;
+        animation: fall linear forwards;
+      }
+      @keyframes fall {
+        0% {
+          transform: translateY(-10vh) rotate(0deg) scale(0.4);
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(110vh) rotate(720deg) scale(1);
+          opacity: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ========== 封面页 ========== -->
+    <div class="page active cover-page" id="coverPage" onclick="openBlessing()">
+      <div class="cover-envelope">💌</div>
+      <div class="cover-tip">轻 触 拆 开</div>
+    </div>
+    <!-- ========== 祝福页 ========== -->
+    <div class="page hidden blessing-page" id="blessingPage">
+      <!-- 照片轮播背景 -->
+      <div class="photo-slideshow" id="photoSlideshow">
+        <!-- 照片会自动由JS生成，避免这里写死 -->
+      </div>
+
+      <!-- 信纸 -->
+      <div class="letter-container" id="letterBox">
+        <h1>🌷 母亲节快乐 🌷</h1>
+        <div class="letter-content">
+          <!-- /* ===== 把下面文字换成你想对妈妈说的话 ===== */ -->
+          亲爱的妈妈，<br />
+          谢谢你做我生命里的光。<br />
+          每一次回家都有热饭，<br />
+          每一次远行都有牵挂。<br />
+          愿你眼角永远带笑，<br />
+          愿岁月对你温柔以待。<br />
+          我永远爱你。
+        </div>
+        <div class="letter-signature">
+          —— 你的小棉袄/小夹克
+          <!-- /* ===== 改这里署名 ===== */ -->
+        </div>
+      </div>
+
+      <!-- 音乐按钮 -->
+      <button class="music-btn" id="musicBtn" onclick="toggleMusic()">
+        🎵
+      </button>
+
+      <!-- 背景音乐 -->
+      <audio id="bgMusic" loop preload="auto">
+        <!-- /* ===== 替换为你的音乐链接 ===== */ -->
+        <source src="https://你的音乐链接.mp3" type="audio/mpeg" />
+        您的浏览器不支持音频播放。
+      </audio>
+    </div>
+
+    <script>
+      // ========== 照片列表（替换为你的照片链接） ==========
+      const PHOTOS = [
+        "https://你的照片链接1.jpg",
+        "https://你的照片链接2.jpg",
+        "https://你的照片链接3.jpg",
+        // 继续添加 ...
+      ];
+
+      // 生成轮播图
+      const slideshow = document.getElementById("photoSlideshow");
+      let currentPhotoIndex = 0;
+      PHOTOS.forEach((src, idx) => {
+        const img = document.createElement("img");
+        img.src = src;
+        img.alt = "合照";
+        if (idx === 0) img.classList.add("active-photo");
+        slideshow.appendChild(img);
+      });
+
+      // 照片轮播
+      let photoInterval;
+      function startPhotoSlideshow() {
+        const images = slideshow.querySelectorAll("img");
+        if (images.length === 0) return;
+        photoInterval = setInterval(() => {
+          images[currentPhotoIndex].classList.remove("active-photo");
+          currentPhotoIndex = (currentPhotoIndex + 1) % images.length;
+          images[currentPhotoIndex].classList.add("active-photo");
+        }, 4000); // 每4秒切换一张
+      }
+
+      // ========== 打开信封 ==========
+      function openBlessing() {
+        // 切换到祝福页
+        document.getElementById("coverPage").classList.remove("active");
+        document.getElementById("coverPage").classList.add("hidden");
+        document.getElementById("blessingPage").classList.remove("hidden");
+        document.getElementById("blessingPage").classList.add("active");
+
+        // 信纸动画延迟一点出现
+        setTimeout(() => {
+          document.getElementById("letterBox").classList.add("show");
+          document.getElementById("musicBtn").classList.add("show");
+        }, 300);
+
+        // 启动照片轮播
+        startPhotoSlideshow();
+        // 启动爱心飘落
+        startHearts();
+      }
+
+      // 音乐控制
+      const bgMusic = document.getElementById("bgMusic");
+      function toggleMusic() {
+        if (bgMusic.paused) {
+          bgMusic.play().catch((e) => console.log("播放需要用户交互"));
+          document.getElementById("musicBtn").textContent = "🎵";
+        } else {
+          bgMusic.pause();
+          document.getElementById("musicBtn").textContent = "🔇";
+        }
+      }
+      // 封面点击时尝试触发一次音乐（由于自动播放限制，实际需要用户再点按钮）
+      // 我们让音乐按钮第一次显示时引导用户点击
+
+      // 爱心飘落
+      function startHearts() {
+        const container = document.getElementById("blessingPage");
+        const emojis = ["❤️", "💕", "💗", "🌸", "✨"];
+        setInterval(() => {
+          const heart = document.createElement("span");
+          heart.className = "heart";
+          heart.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+          heart.style.left = Math.random() * 95 + "%";
+          heart.style.animationDuration = Math.random() * 4 + 3 + "s";
+          heart.style.fontSize = Math.random() * 24 + 14 + "px";
+          container.appendChild(heart);
+          heart.addEventListener("animationend", () => heart.remove());
+        }, 600);
+      }
+    </script>
+  </body>
+</html>
